@@ -44,6 +44,13 @@ jobs:
         with:
           ruby-version: 3.2
           bundler-cache: true
+      
+      - name: Bundle
+        run: bundle
+
+      - name: Lock
+        run: cat Gemfile.lock
+
 
       - name: Build site
         run: bundle exec jekyll b -d "_site${{ steps.pages.outputs.base_path }}"

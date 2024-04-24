@@ -1,9 +1,9 @@
 ---
+author: manuel
 layout: post
 title:  "Hello World!"
 categories: [test, cat2]
 tags: [tag, tag2]
-author: manuel
 ---
 
 # Heading
