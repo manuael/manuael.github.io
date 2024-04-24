@@ -1,5 +1,4 @@
 ---
-author: manuel
 layout: post
 title:  "Hello World!"
 categories: [test, cat2]
