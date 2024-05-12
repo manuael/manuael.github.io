@@ -21,7 +21,7 @@ On top of that, in order to see which company paid for which subscription, our s
 
 Fortunately we already had a pipeline set up that imported data into BigQuery and Looker for reporting.
 
-![Test](/images/test.png)
+![Diagram of the prior data flow from app to our BigQuery Project and Visualisation Tool](/images/ProcessStatusQuo.png)
 
 In theory, we could have pushed our app data right onto a Hubspot company. But that would have meant ignoring the severe fundamental architectural issue:
 
@@ -34,11 +34,12 @@ When looking carefully at the underlying data schemas of Funnel and Hubspot, we 
 
 Therefore if we would simply copy data from our in-app subscription data to our Hubspot company, we would face a dilemma: we could continuously overwrite the same property of one company with the data of two different subscriptions, in case a company “owns” 1+ subscriptions.
 
-IMAGE
+![Diagram of the Subscription and Company Entities showing a 1:N relationship](/images/SOCompanyEntity.png)
 
 If you are familiar with data modelling, you already know that this is a classical one-to-many data model (1:N) that comes with all the consequences.
 
-IMAGE
+![Visualisation of the relationship problem between the subscription and company entities](/images/ProblemDiagram.png)
+
 
 Even though only 10% of our customers had more than one subscription, this would mean our reps could only trust 90% of the data. This is not a good enough trade-off for us. We need to be sure that the data we see in Hubspot is correct. Any doubt of the correctness defeats the purpose and will lead people to make manual changes again.
 
@@ -48,14 +49,16 @@ With this we could fully trust that each record is unique and correct. It was a 
 
 This prevents overwriting the same property on the company object, because all subscription data is now hosted on that new object.
 
-IMAGE
+![Visualisation of the solution of the entity problem](/images/SolutionDiagram.png)
 
 After some experimentation we created a new custom object in Hubspot via [API](https://developers.hubspot.com/docs/api/crm/crm-custom-objects?uuid=e1a07f12-8bc4-44bc-81b2-b739f602c4f6) (nowadays you can also do it via the GUI), which we creatively called Subscription Object (SO).
 
 ## Process Design
 Now we just needed a reverseETL tool that allowed us to pipe that data from our warehouse to Hubspot. After some experimentation we decided for Hightouch. This is mainly because of Hightouch’s better association capability between objects at the time, but also because we only had one destination and therefore we could use their free plan.
 
-IMAGEThe project has had big impact in our customer retainment and growth metrics. Furthermore and maybe more importantly, this has broken down a lot of architectural obstacles that allows for so many more functionalities. Creating a mirror of our app data has enabled us move faster and with more confidence.
+![Process Diagram of the new architecture](/images/FinalProcess.png)
+
+The project has had big impact in our customer retainment and growth metrics. Furthermore and maybe more importantly, this has broken down a lot of architectural obstacles that allows for so many more functionalities. Creating a mirror of our app data has enabled us move faster and with more confidence.
 
 It also showed me that it is important to look further than the next quarter and the next project. It makes sense to not just incrementally improve, but to dare to take that step-change.
 
@@ -74,7 +77,7 @@ Back to the topic: Email addresses contain domains names, like tim@tester.com. T
 
 We used that email domain mechanism to upsert users into Hubspot, mark those users who are subscription owners and then associate their company to our subscriptions. That association was done via custom code in a workflow that was triggered by new contacts/subscription owner information.
 
-IMAGE
+![Final flow diagram of the new entities](/images/FinalEntityFlowDiagram.png)
 
 With this association in place, we can copy the assigned CSP from the company to the SO. And with the daily updates coming in, we knew who to notify when something needed attention.
 
