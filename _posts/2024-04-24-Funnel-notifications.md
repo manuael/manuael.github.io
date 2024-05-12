@@ -21,7 +21,7 @@ On top of that, in order to see which company paid for which subscription, our s
 
 Fortunately we already had a pipeline set up that imported data into BigQuery and Looker for reporting.
 
-![Test](./docs/assets/img/test.png)
+![Test](docs/assets/img/test.png)
 
 
 In theory, we could have pushed our app data right onto a Hubspot company. But that would have meant ignoring the severe fundamental architectural issue:
