@@ -9,7 +9,7 @@ tags: [Funnel, Hubspot]
 
 Customer Support and Success is one of the most important pillars of a successful B2B business. In order to provide a great customer experience, the business needs to stay closely connected to their customers.
 
-Just a few years ago, [Funnel](www.funnel.io) faced a significant disconnect between our commercial teams and our customers' actions within our app. This resulted in missed opportunities and preventable churn. Through strategic improvements in our data infrastructure and architectural design, we enabled our teams to change from being reactive to customer communication to proactively assist and reach out to our customers when they need help. This had immediate impact to our bottom line: we observed an increase of our Annual Recurring Revenue (ARR) by over 2 million USD in 2 years. In this article, I will describe the obstacles, the decisions and the inner workings of the solution.
+Just a few years ago, [Funnel](https://www.funnel.io) faced a significant disconnect between our commercial teams and our customers' actions within our app. This resulted in missed opportunities and preventable churn. Through strategic improvements in our data infrastructure and architectural design, we enabled our teams to change from being reactive to customer communication to proactively assist and reach out to our customers when they need help. This had immediate impact to our bottom line: we observed an increase of our Annual Recurring Revenue (ARR) by over 2 million USD in 2 years. In this article, I will describe the obstacles, the decisions and the inner workings of the solution.
 
 ## Problems
 ### Difficult and time consuming to understand customer behavior
