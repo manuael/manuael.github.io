@@ -129,7 +129,7 @@ pwa:
 paginate: 10
 
 # The base URL of your site
-baseurl: "https://manuael.github.io"
+baseurl: "" #"https://manuael.github.io"
 
 # ------------ The following options are not recommended to be modified ------------------
 
