@@ -1,11 +1,9 @@
 ---
 layout: post
-title:  "Hello World!"
+title:  "From Disconnect to Proactivity: How Funnel Increased ARR by $2 Million with simple notifications"
 categories: [article]
 tags: [Funnel, Hubspot]
 ---
-
-# From Disconnect to Proactivity: How Funnel Increased ARR by $2 Million with simple notifications
 
 Customer Support and Success is one of the most important pillars of a successful B2B business. In order to provide a great customer experience, the business needs to stay closely connected to their customers.
 
@@ -57,14 +55,14 @@ After some experimentation we created a new custom object in Hubspot via [API](h
 ## Process Design
 Now we just needed a reverseETL tool that allowed us to pipe that data from our warehouse to Hubspot. After some experimentation we decided for Hightouch. This is mainly because of Hightouch’s better association capability between objects at the time, but also because we only had one destination and therefore we could use their free plan.
 
-IMAGE
+IMAGEThe project has had big impact in our customer retainment and growth metrics. Furthermore and maybe more importantly, this has broken down a lot of architectural obstacles that allows for so many more functionalities. Creating a mirror of our app data has enabled us move faster and with more confidence.
 
-### Hightouch setup
-Since we had access to the subscriptions and user tables, we set up two syncs:
+It also showed me that it is important to look further than the next quarter and the next project. It makes sense to not just incrementally improve, but to dare to take that step-change.
 
-1. Subscriptions → Subscription Object
+What became clear as well is that a technical change only becomes a real success, when enablement and onboarding is taken care of. Habits are hard to change. I feel like this has been said a thousand times before, but I only ever really felt it once I started working in Revenue Operations.
 
-We read each record of our subscription table and upsert (update if existing; create if new) each record into our new custom object. This sync runs each day and continuously updates our subscriptions with the latest data from the app.
+
+on table and upsert (update if existing; create if new) each record into our new custom object. This sync runs each day and continuously updates our subscriptions with the latest data from the app.
 
 2. Users → Hubspot Contacts
 
