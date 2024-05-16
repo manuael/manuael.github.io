@@ -92,9 +92,9 @@ To identify the impact of these changes we started tracking the deals closed aft
 # Trade-Offs
 
 
-    “There are no right and wrong answers in architecture - only trade-offs” source.
-    
-    Neal Ford, Fundamentals of Software Engineering
+*“There are no right and wrong answers in architecture - only trade-offs”.* 
+
+Neal Ford, Fundamentals of Software Engineering
 
 Not all is rosy with our solution. It has improved our previous system, but it is not perfect. However, we deliberately choose to take these trade-offs in order to improve our system. Here are some of our tradeoffs:
 
