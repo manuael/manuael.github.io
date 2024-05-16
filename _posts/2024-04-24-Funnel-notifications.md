@@ -4,7 +4,6 @@ title:  "How Funnel Increased ARR by $2 Million with simple notifications"
 categories: [article]
 tags: [Funnel, Hubspot]
 ---
-{% include mycomponent.html %}
 
 Customer Support and Success is one of the most important pillars of a successful B2B business. In order to provide great customer experience, the business needs to stay closely connected to their users.
 
