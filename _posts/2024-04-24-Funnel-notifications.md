@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Boosting ARR by $2 Million: Funnel’s Journey with Data Integration and Proactive Notifications"
+title:  "From Data Silos to $2 Million ARR Boost: Funnel’s Journey with Data Integration and Proactive Notifications"
 categories: [article]
 tags: [Funnel, Hubspot]
 ---
