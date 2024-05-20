@@ -8,7 +8,7 @@ tags: [Funnel, Hubspot]
 
 Customer Support and Success is one of the most important pillars of a successful B2B business. In order to provide great customer experience, the business needs to stay closely connected to their users.
 
-Just a few years ago, [Funnel](https://www.funnel.io) faced a significant disconnect between our commercial teams and our customers' actions within our app. This resulted in missed opportunities and preventable churn. Through strategic improvements in our data infrastructure and architectural design, we enabled our teams to change from being reactive to customer communication to proactively assist and reach out to our customers when they need help. This had immediate impact to our bottom line: we observed an increase of our Annual Recurring Revenue (ARR) by over 2 million USD in 2 years. In this article, I would like to give a short overview of the obstacles, the decisions and the inner workings of the solution.
+Just a few years ago, commercial teams at [Funnel](https://www.funnel.io) faced the challenge of not being able to fully leverage our application data. This resulted in missed opportunities and preventable churn. Through strategic improvements in our data infrastructure and architectural design, we enabled our teams to change from being reactive to customer communication to proactively assist and reach out to our customers when they need help. This had immediate impact to our bottom line: we observed an increase of our Annual Recurring Revenue (ARR) by over 2 million USD in 2 years. In this article, I would like to give a short overview of the obstacles, the decisions and the inner workings of the solution.
 
 # Problems
 ### Difficult and time consuming to understand customer behavior
@@ -16,7 +16,7 @@ Just a few years ago, [Funnel](https://www.funnel.io) faced a significant discon
 Hubspot was and still is our central commercial nervous system. All revenue teams work in some way or another with the platform. Hubspot was however fully disconnected from our own app when I started. As a result our commercial teams struggled with lack of insight into what our customers and leads were doing in-app. They had to resort to check every customer manually in our reporting tool. Since this took a good amount of time, most could only react on important events like renewals and customer communication instead of proactilvely reaching out to help and support.
 
 ### Inaccurate data
-On top of that, in order to see which company paid for which subscription, our sales team was forced to copy-paste Ids on deals and companies. Only then was our Finance team able to assign the right revenue to the right subscriptions. As you may imagine, this did not only cost thousands of hours of admin work, but also produced inaccurate data, as wrong data was copied or entirely forgotten on a regular basis.
+On top of that we relied on human input to map subscriptions to hubspot records. Only then was our Finance team able to assign the right revenue to the right subscriptions. As you may imagine, this did not only cost thousands of hours of admin work, but also produced inaccurate data, as wrong data was copied or entirely forgotten on a regular basis. 
 
 ### Architecture Design:
 
@@ -102,20 +102,20 @@ As we have discussed before, by associating companies and subscriptions on the b
 
 This turned out to be true, however in complicated cases of big agency customers or other complicated setups, the data might be incorrect and we need to adjust manually. This is not ideal, but we traded a bad to a significantly better situation that required only a fraction of time investment and more accurate data.
 
-We also assumed that at some point in the future, the product will have an improved understanding of the owner of a subscription. We are moving closer and closer to that vision every month. With our new freemium offering and the possibility of self-serving, we have achieved this goal, but the large and complicated subscriptions still remain and need to be assessed once in a while. I believe that we will be able to also migrate the larger subscriptions to the new system, which then completely nullifies this trade-off.
-
+We also assumed that in the future, the product will have an improved understanding of the owner of a subscription. We are moving closer and closer to that vision every month. With our new freemium offering and the possibility of self-serving, we have achieved this goal, but the large and complicated subscriptions still remain and need to be assessed once in a while. I believe that we will be able to also migrate the larger subscriptions to the new system, which then completely nullifies this trade-off.
 
 **Multiple subscription owners from different companies**
 
-It is possible that a subscription can have several subscription owners from different companies. This obviously makes it fairly uncertain which company is the Tenant. Generally we take the first subscription owner that was ever submitted, but it does not 100% solve the problem as ownership can change. We accepted that this will remain a problem, until our Finance tools are directly integrated with our app and we can uniquely identify the company directly. This solves issue 1. and 2. Also this is being worked on and surely solved in the close future.
+It is possible that a subscription can have several subscription owners from different companies. This obviously makes it fairly uncertain which company is the Tenant. Generally we take the first subscription owner that was ever submitted, but it does not solve the problem fully as ownership can change. We accepted that this will remain a problem, until our Finance tools are directly integrated with our app and we can uniquely identify the company directly. Also this is being worked on and surely solved in the close future.
 
 **Out-of-date data**
 
-Since our BI team is ingesting data on a daily basis, any usage notification could not be correct anymore. We saw that sometimes our customers have just for a brief moment crossed one of our internal notifications thresholds, but since we had no real-time updates, it could be that we send out information that is already incorrect when our reps checked in. This leads to trust issues.
+Since our BI team is ingesting data on a daily basis, it is possible that a given datapoint may have changed since last sync. We saw that sometimes our customers have just for a brief moment crossed one of our internal notifications thresholds, but since we had no real-time updates, it could be that we send out information that is already incorrect when our reps checked in. This leads to trust issues.
 
-As an answer to that we made sure not to use time-sensitive metrics for notifications. For example we would not send out notifications when a user has crossed usage limits for the first time, but only when it was above limit for 7 days. That removes the scenario that it was just a blip. It still remained possible however that data in HS was incorrect for at least 24h. That was a big reason to work on our real-time data pipeline from our app into our commercial tools, which we have solved as of end of 2023.
+As an answer to that we made sure not to use time-sensitive metrics for notifications. For example we would not send out notifications when a user has crossed usage limits for the first time, but only when it was above limit for 7 days. That removes the scenario that it was just a blip. 
+It still remained possible however that data in HS was incorrect for at least 24h. That was a big reason to work on our real-time data pipeline from our app into our commercial tools, which we have solved at the end of 2023.
 
-As of now this has been solved, because we have successfully implemented our real-time data pipeline. This allows us to get a health check of our customers in seconds. A new customer struggling with a new destination we can now check-in on them immediately and alleviate the frustration, leading to improved customer experience.
+Implementinh our real-time data pipeline has allowed us to get a health check of our customers in seconds. We can now check-in on new customer for example struggling with a new destination immediately and alleviate the frustration.
 
 # Closing Thoughts:
 Change is extraordinarily difficult. Finding technological solutions is often fairly easy compared to the cultural and organizational challenges of change. Fortunately, we were able to overcome these obstacles and break down a lot of architectural and cultural roadblocks. This has not only enabled the Revenue Operations team but also allows other commercial teams to use and act on the same data. The changes will likely have an even bigger impact on Funnel than what we have directly measured with our notifications. It was an investment in the fundamental capabilities of Funnel.
