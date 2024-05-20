@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "How Funnel Increased ARR by $2 Million with simple notifications"
+title:  "Boosting ARR by $2 Million: Funnel’s Journey with Data Integration and Proactive Notifications"
 categories: [article]
 tags: [Funnel, Hubspot]
 ---
@@ -60,16 +60,13 @@ Now we just needed a reverseETL tool that allowed us to pipe that data from our 
 
 ![Process Diagram of the new architecture](/images/FinalProcess.png)
 
-The project has had big impact in our customer retainment and growth metrics. Furthermore and maybe more importantly, this has broken down a lot of architectural obstacles that allows for so many more functionalities. Creating a mirror of our app data has enabled us move faster and with more confidence.
+Since we had access to the subscriptions and user tables, we set up two syncs: 
 
-It also showed me that it is important to look further than the next quarter and the next project. It makes sense to not just incrementally improve, but to dare to take that step-change.
+1. **Subscriptions → Subscription Object**
 
-What became clear as well is that a technical change only becomes a real success, when enablement and onboarding is taken care of. Habits are hard to change. I feel like this has been said a thousand times before, but I only ever really felt it once I started working in Revenue Operations.
+We read each record of our subscription table and upsert (update if existing; create if new) each record into our new custom object. This sync runs each day and continuously updates our subscriptions with the latest data from the app.
 
-
-on table and upsert (update if existing; create if new) each record into our new custom object. This sync runs each day and continuously updates our subscriptions with the latest data from the app.
-
-2. Users → Hubspot Contacts
+2. **Users → Hubspot Contacts**
 
 One problem remained: the subscription records were not associated to any company, because we simply do not have company information in the app.
 
