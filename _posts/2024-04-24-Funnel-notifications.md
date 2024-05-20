@@ -8,12 +8,12 @@ tags: [Funnel, Hubspot]
 
 Customer Support and Success is one of the most important pillars of a successful B2B business. In order to provide great customer experience, the business needs to stay closely connected to their users.
 
-Just a few years ago, [Funnel](https://www.funnel.io) faced a significant disconnect between our commercial teams and our customers' actions within our app. This resulted in missed opportunities and preventable churn. Through strategic improvements in our data infrastructure and architectural design, we enabled our teams to change from being reactive to customer communication to proactively assist and reach out to our customers when they need help. This had immediate impact to our bottom line: we observed an increase of our Annual Recurring Revenue (ARR) by over 2 million USD in 2 years. In this article, I will describe the obstacles, the decisions and the inner workings of the solution.
+Just a few years ago, [Funnel](https://www.funnel.io) faced a significant disconnect between our commercial teams and our customers' actions within our app. This resulted in missed opportunities and preventable churn. Through strategic improvements in our data infrastructure and architectural design, we enabled our teams to change from being reactive to customer communication to proactively assist and reach out to our customers when they need help. This had immediate impact to our bottom line: we observed an increase of our Annual Recurring Revenue (ARR) by over 2 million USD in 2 years. In this article, I would like to give a short overview of the obstacles, the decisions and the inner workings of the solution.
 
 # Problems
 ### Difficult and time consuming to understand customer behavior
 
-Hubspot was and still is our central commercial nervous system. All revenue teams work in some way or another with the platform. Hubspot was however fully disconnected from our app when I started. Our commercial teams struggled with lack of insight into what our customers and leads were doing in-app. They had to resort to check every customer manually in our reporting tool. Since this took a good amount of time, most had to resort to only react on important events like renewals and customer communication, instead of reaching out to help and support.
+Hubspot was and still is our central commercial nervous system. All revenue teams work in some way or another with the platform. Hubspot was however fully disconnected from our own app when I started. As a result our commercial teams struggled with lack of insight into what our customers and leads were doing in-app. They had to resort to check every customer manually in our reporting tool. Since this took a good amount of time, most could only react on important events like renewals and customer communication instead of proactilvely reaching out to help and support.
 
 ### Inaccurate data
 On top of that, in order to see which company paid for which subscription, our sales team was forced to copy-paste Ids on deals and companies. Only then was our Finance team able to assign the right revenue to the right subscriptions. As you may imagine, this did not only cost thousands of hours of admin work, but also produced inaccurate data, as wrong data was copied or entirely forgotten on a regular basis.
@@ -56,7 +56,7 @@ This prevents overwriting the same property on the company object, because all s
 
 After some experimentation we created a new custom object in Hubspot via [API](https://developers.hubspot.com/docs/api/crm/crm-custom-objects?uuid=e1a07f12-8bc4-44bc-81b2-b739f602c4f6) (nowadays you can also do it via the GUI), which we creatively called Subscription Object (SO).
 
-Now we just needed a reverseETL tool that allowed us to pipe that data from our warehouse to Hubspot. After some experimentation we decided for Hightouch. This is mainly because of Hightouch’s better association capability between objects at the time, but also because we only had one destination and therefore we could use their free plan.
+Now we just needed a [Reverse ETL](https://hightouch.com/blog/reverse-etl) tool that allowed us to pipe that data from our warehouse to Hubspot. After some experimentation we decided for Hightouch. This is mainly because of Hightouch’s better association capability between objects at the time, but also because we only had one destination and therefore we could use their free plan.
 
 ![Process Diagram of the new architecture](/images/FinalProcess.png)
 
@@ -70,7 +70,7 @@ We read each record of our subscription table and upsert (update if existing; cr
 
 One problem remained: the subscription records were not associated to any company, because we simply do not have company information in the app.
 
-What we have are user email addresses and “Subscription Owner” information. A “Subscription Owner” in the app can be understood as an Admin and we made the deliberate assumption (it is extremely important to be aware of assumptions, as they can completely break a system if unknown. I recommend articulating assumptions explicitly) that those users are from the company that pays for the subscription. Obviously this is not always the case. There are scenarios where a “Subscription Owner” does not belong to the company that pays for the subscription. We deliberately accepted that risk since we deemed it unlikely enough to tolerate in lieu of better identification mechanisms. I will come back to this later, as this is an important moment in the project and it deserves some more discussion.
+What we have are user email addresses and “Subscription Owner” labels. A “Subscription Owner” in the app can be understood as an Admin and we made the deliberate assumption (it is extremely important to be aware of assumptions, as they can completely break a system if unknown. I recommend articulating assumptions explicitly) that those users are from the company that pays for the subscription. Obviously this is not always the case. There are scenarios where a “Subscription Owner” does not belong to the company that pays for the subscription. We deliberately accepted that risk since we deemed it unlikely enough to tolerate in lieu of better identification mechanisms. I will come back to this later, as this is an important moment in the project and it deserves some more discussion.
 
 Back to the topic: Email addresses contain domains names, like tim@tester.com. The domain tester.com of that email address is the basis of a company in Hubspot. When an email with that domain enters Hubspot, Hubspot checks if a company with that domain exists already. If so, the contact gets automatically associated to that company. Otherwise a new company is created and subsequently associated.
 
@@ -118,7 +118,4 @@ As an answer to that we made sure not to use time-sensitive metrics for notifica
 As of now this has been solved, because we have successfully implemented our real-time data pipeline. This allows us to get a health check of our customers in seconds. A new customer struggling with a new destination we can now check-in on them immediately and alleviate the frustration, leading to improved customer experience.
 
 # Closing thoughts:
-The project has had big impact in our customer retainment and growth metrics. Furthermore and maybe more importantly, this has broken down a lot of architectural obstacles that allows for so many more functionalities. Creating a mirror of our app data has enabled us move faster and with more confidence.
-
-It also showed me that it is important to look further than the next quarter and the next project. It makes sense to not just incrementally improve, but to dare to take that step-change.
-
+Change is extraordinarily difficult. I think that finding technological solutions is fairly easy and trivial compared to the cultural and organisational challenges of change. Fortunately we were able to overcome those obstacles and break down a lot of architectural and cultural roadblocks. This has not only enabled the Revenue Operations team, but also allows other commercial teams to use and act on the same data. The changes will therefore likely have an even bigger impact on Funnel than what we have directly measured, i.e. our notifications. It was an investment in the fundamental capabilities of Funnel. 
