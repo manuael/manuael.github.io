@@ -5,9 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>p5.js Sketch</title>
     <!-- Link to p5.js library via CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"
-        integrity="sha512-d6sc8kbZEtA2LwB9m/ck0FhvyUwVfdmvTeyJRprmj7Wg9wRFtHDIpr6qk4g/y3Ix3O9I6KHIv6SGu9f7RaP1Gw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
     <style>
         /* You can add some CSS styles here if needed */
         body {
@@ -21,6 +19,10 @@
     </style>
 </head>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"
+    integrity="sha512-d6sc8kbZEtA2LwB9m/ck0FhvyUwVfdmvTeyJRprmj7Wg9wRFtHDIpr6qk4g/y3Ix3O9I6KHIv6SGu9f7RaP1Gw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <body>
     <div id="sketch1">
         <p>Test</p>
@@ -31,9 +33,11 @@
     </div>
     <script>
         // Your p5.js sketch code goes here
+        var myCanvas;
+    
         function setup() {
-            var canvas = createCanvas(400, 400);
-            canvas.parent("sketch"); // Attach the canvas to the 'sketch' div
+            myCanvas = createCanvas(400, 400);
+            myCanvas.parent("myCanvas"); // Attach the canvas to the 'myCanvas' div
             background(220);
         }
     
