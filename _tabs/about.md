@@ -15,4 +15,4 @@ order: 4
 - Likes cats and cellular automata.
 
 
-{% include mycomponent.html %}
+{% include gameoflife.html %}
