@@ -1,104 +1,51 @@
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Game of life</title>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>p5.js Game Canvas</title>
+    <!-- Include the p5.js library from a CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-  </head>
-  <body>
-    test
-    
-  </body>
-  <script>
-    console.log("Hello console from game of life");
-    //document.body.appendChild(<p>test</p>)
-  </script>
-  <script>
-      let w;
-      let columns;
-      let rows;
-      let board;
-      let next;
+</head>
+<body>
+    <script>
+        // Define a global variable for the ball
+      console.log("Testing")
+        let ball;
 
-      function setup() {
-        // Set simulation framerate to 10 to avoid flickering
-        frameRate(10);
-        createCanvas(360, 200);
-        w = 20;
-        // Calculate columns and rows
-        columns = floor(width / w);
-        rows = floor(height / w);
-        // Wacky way to make a 2D array is JS
-        board = new Array(columns);
-        for (let i = 0; i < columns; i++) {
-          board[i] = new Array(rows);
+        // The setup function is called once when the program starts
+        function setup() {
+            // Create a canvas of width 800px and height 600px
+            createCanvas(800, 600);
+            // Initialize the ball object
+            ball = {
+                x: width / 2,
+                y: height / 2,
+                diameter: 50,
+                xSpeed: 5,
+                ySpeed: 3
+            };
         }
-        // Going to use multiple 2D arrays and swap them
-        next = new Array(columns);
-        for (i = 0; i < columns; i++) {
-          next[i] = new Array(rows);
-        }
-        init();
-      }
 
-      function draw() {
-        background(255);
-        generate();
-        for (let i = 0; i < columns; i++) {
-          for (let j = 0; j < rows; j++) {
-            if (board[i][j] == 1) fill(0);
-            else fill(255);
-            stroke(0);
-            rect(i * w, j * w, w - 1, w - 1);
-          }
-        }
-      }
+        // The draw function continuously executes the lines of code contained inside its block until the program is stopped or noLoop() is called
+        function draw() {
+            // Set the background color to black
+            background(0);
+            // Draw the ball
+            ellipse(ball.x, ball.y, ball.diameter, ball.diameter);
 
-      // reset board when mouse is pressed
-      function mousePressed() {
-        init();
-      }
+            // Update the ball's position
+            ball.x += ball.xSpeed;
+            ball.y += ball.ySpeed;
 
-      // Fill board randomly
-      function init() {
-        for (let i = 0; i < columns; i++) {
-          for (let j = 0; j < rows; j++) {
-            // Lining the edges with 0s
-            if (i == 0 || j == 0 || i == columns - 1 || j == rows - 1) board[i][j] = 0;
-            // Filling the rest randomly
-            else board[i][j] = floor(random(2));
-            next[i][j] = 0;
-          }
-        }
-      }
-
-      // The process of creating the new generation
-      function generate() {
-        // Loop through every spot in our 2D array and check spots neighbors
-        for (let x = 1; x < columns - 1; x++) {
-          for (let y = 1; y < rows - 1; y++) {
-            // Add up all the states in a 3x3 surrounding grid
-            let neighbors = 0;
-            for (let i = -1; i <= 1; i++) {
-              for (let j = -1; j <= 1; j++) {
-                neighbors += board[x + i][y + j];
-              }
+            // Check for collision with the edges of the canvas
+            if (ball.x < ball.diameter / 2 || ball.x > width - ball.diameter / 2) {
+                ball.xSpeed *= -1; // Reverse the horizontal direction
             }
-
-            // A little trick to subtract the current cell's state since
-            // we added it in the above loop
-            neighbors -= board[x][y];
-            // Rules of Life
-            if (board[x][y] == 1 && neighbors < 2) next[x][y] = 0; // Loneliness
-            else if (board[x][y] == 1 && neighbors > 3) next[x][y] = 0; // Overpopulation
-            else if (board[x][y] == 0 && neighbors == 3) next[x][y] = 1; // Reproduction
-            else next[x][y] = board[x][y]; // Stasis
-          }
+            if (ball.y < ball.diameter / 2 || ball.y > height - ball.diameter / 2) {
+                ball.ySpeed *= -1; // Reverse the vertical direction
+            }
         }
-
-        // Swap!
-        let temp = board;
-        board = next;
-        next = temp;
-      }
     </script>
+</body>
 </html>
