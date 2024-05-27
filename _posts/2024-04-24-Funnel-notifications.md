@@ -10,7 +10,7 @@ Customer Support and Success is one of the most important pillars of a successfu
 
 Just a few years ago, commercial teams at [Funnel](https://www.funnel.io) faced the challenge of not being able to fully leverage our application data. This resulted in missed opportunities and preventable churn. Through strategic improvements in our data infrastructure and architectural design, we enabled our teams to change from being reactive to customer communication to proactively assist and reach out to our customers when they need help. This had immediate impact to our bottom line: we observed an increase of our Annual Recurring Revenue (ARR) by over 2 million USD in 2 years. In this article, I would like to give a short overview of the obstacles, the decisions and the inner workings of the solution.
 
-# Problems
+# Challenges
 ### Difficult and time consuming to understand customer behavior
 
 Hubspot was and still is our central commercial nervous system. All revenue teams work in some way or another with the platform. Hubspot was however fully disconnected from our own app when I started. As a result our commercial teams struggled with lack of insight into what our customers and leads were doing in-app. They had to resort to check every customer manually in our reporting tool. Since this took a good amount of time, most could only react on important events like renewals and customer communication instead of proactilvely reaching out to help and support.
@@ -48,9 +48,7 @@ Even though only 10% of our customers had more than one subscription, this would
 
 Fortunately Hubspot released a new beta at that time: [custom objects](https://www.hubspot.com/products/custom-objects). We were eager to jump on that new functionality, because it gave us the possibility to create a 1:1 relationship between our subscription in Funnel and our new custom object in Hubspot.
 
-With this we could fully trust that each record is unique and correct. It was a downstream mirror of whatever happens in the app. Furthermore a company could be associated as a 1:N relationship between records of the new custom object, which models reality quite well. That means that a company can have 0:N associated “Tenant” subscriptions (subscriptions that they are paying for) and a subscription could only have 0:1 Tenants(only one company can pay for a subscription).
-
-This prevents overwriting the same property on the company object, because all subscription data is now hosted on that new object.
+With this we could fully trust that each record is unique and correct. It was a downstream mirror of whatever happens in the app. Furthermore a company could be associated as a 1:N relationship between records of the new custom object, which models reality quite well. That means that a company can have 0:N associated “Tenant” subscriptions (subscriptions that they are paying for) and a subscription could only have 0:1 Tenants(only one company can pay for a subscription). This prevents overwriting the same property on the company object, because all subscription data is now hosted on that new object.
 
 ![Visualisation of the solution of the entity problem](/images/SolutionDiagram.png)
 
@@ -63,14 +61,11 @@ Now we just needed a [Reverse ETL](https://hightouch.com/blog/reverse-etl) tool 
 Since we had access to the subscriptions and user tables, we set up two syncs: 
 
 1. **Subscriptions → Subscription Object**
+2. **Users → Hubspot Contacts**
 
 We read each record of our subscription table and upsert (update if existing; create if new) each record into our new custom object. This sync runs each day and continuously updates our subscriptions with the latest data from the app.
 
-2. **Users → Hubspot Contacts**
-
-One problem remained: the subscription records were not associated to any company, because we simply do not have company information in the app.
-
-What we have are user email addresses and “Subscription Owner” labels. A “Subscription Owner” in the app can be understood as an Admin and we made the deliberate assumption (it is extremely important to be aware of assumptions, as they can completely break a system if unknown. I recommend articulating assumptions explicitly) that those users are from the company that pays for the subscription. Obviously this is not always the case. There are scenarios where a “Subscription Owner” does not belong to the company that pays for the subscription. We deliberately accepted that risk since we deemed it unlikely enough to tolerate in lieu of better identification mechanisms. I will come back to this later, as this is an important moment in the project and it deserves some more discussion.
+One problem remained: the subscription records were not associated to any company, because we simply do not have company information in the app. What we have are user email addresses and “Subscription Owner” labels. A “Subscription Owner” in the app can be understood as an Admin and we made the deliberate assumption (it is extremely important to be aware of assumptions, as they can completely break a system if unknown. I recommend articulating assumptions explicitly) that those users are from the company that pays for the subscription. Obviously this is not always the case. There are scenarios where a “Subscription Owner” does not belong to the company that pays for the subscription. We deliberately accepted that risk since we deemed it unlikely enough to tolerate in lieu of better identification mechanisms. I will come back to this later, as this is an important moment in the project and it deserves some more discussion.
 
 Back to the topic: Email addresses contain domains names, like tim@tester.com. The domain tester.com of that email address is the basis of a company in Hubspot. When an email with that domain enters Hubspot, Hubspot checks if a company with that domain exists already. If so, the contact gets automatically associated to that company. Otherwise a new company is created and subsequently associated.
 
@@ -78,31 +73,36 @@ We used that email domain mechanism to upsert users into Hubspot, mark those use
 
 ![Final flow diagram of the new entities](/images/FinalEntityFlowDiagram.png)
 
-With this association in place, we can copy the assigned CSP from the company to the SO. And with the daily updates coming in, we knew who to notify when something needed attention.
+1. Push subscription data into HS SO
+2. Push user data into HS Contacts.
+3. Associate contact and SO. Label as Subscription Owner (more about association labels [here](https://knowledge.hubspot.com/object-settings/create-and-use-association-labels))
+4. Retrieve primary company of contact
+5. Associate primary company with SO and label as Tenant.
+
+With this association in place, we can copy the assigned CSM (Customer Success Manager) from the company to the SO. And with the daily updates coming in, we knew who to notify when something needed attention.
 
 With the hard data engineering work done, setting up the rest of the process was simple:
 
 - with the daily updates we received our customers usage data.
 - in case some usage metrics crossed predetermined thresholds, we triggered a Hubspot workflow to send a task/notification to our CS reps.
 
-To identify the impact of these changes we started tracking the deals closed after receiving a notification and had our reps confirm the reason for the new closed deal. We found out that due to these changes we were able to create more than 2M USD ARR over 2 years with just this one new feature.
+To identify the impact of these changes we started tracking the deals closed after receiving a notification and had our reps confirm if the closed deal was because of our notifications. We found out that due to these changes we were able to create more than 2M USD ARR over 2 years with just this one new feature. That is a significant and incremental revenue increase.
 
 # Trade-Offs
-
 
 *“There are no right and wrong answers in architecture - only trade-offs”.* 
 
 [Neal Ford, Fundamentals of Software Engineering](https://www.oreilly.com/library/view/fundamentals-of-software/9781663728357/)
 
-Not all is rosy with our solution. It has improved our previous system, but it is not perfect. However, we deliberately choose to take these trade-offs in order to improve our system. Here are some of our tradeoffs:
+Not all is perfect with our solution. It has improved our previous system, but it is not free from issues, as shortly discussed before. We deliberately choose to take these trade-offs however in order to improve our system. Here are some of our tradeoffs:
 
 **We accepted a certain kind of uncertainty with company-subscription associations**
 
-As we have discussed before, by associating companies and subscriptions on the basis of the Subscription Owner, we accepted the risk of incorrect data. We needed to map those two entities together, but instead of relying on validated data from users, we relied on approximate data in the product. We deemed the likelihood of wrong data from the app smaller than that of data input from our sales representatives.
+By associating companies and subscriptions on the basis of the Subscription Owner, we accepted the risk of incorrect data. We needed to map those two entities together, but instead of relying on validated data from users, we relied on approximate data in the product. We deemed the likelihood of wrong data from the app smaller than that of data input from our sales representatives.
 
-This turned out to be true, however in complicated cases of big agency customers or other complicated setups, the data might be incorrect and we need to adjust manually. This is not ideal, but we traded a bad to a significantly better situation that required only a fraction of time investment and more accurate data.
+This turned out to be true, however in complicated cases of big agency customers or other complicated setups, the data might be incorrect and we need to adjust manually. This is not ideal, but we traded a bad to a significantly better situation that required only a fraction of time investment and more accurate data. A "perfect" solution would have been years away. It made more sense to make the changes and reap the rewards immediately. 
 
-We also assumed that in the future, the product will have an improved understanding of the owner of a subscription. We are moving closer and closer to that vision every month. With our new freemium offering and the possibility of self-serving, we have achieved this goal, but the large and complicated subscriptions still remain and need to be assessed once in a while. I believe that we will be able to also migrate the larger subscriptions to the new system, which then completely nullifies this trade-off.
+We assumed that in the future, the product will have an improved understanding of the owner of a subscription. We are moving closer and closer to that vision every month in fact. With our new freemium offering and the possibility of self-serving, we have achieved this goal, but the large and complicated subscriptions still remain and need to be assessed. I believe that we will be able to also migrate the larger subscriptions to the new system, which then completely nullifies this trade-off.
 
 **Multiple subscription owners from different companies**
 
@@ -115,7 +115,7 @@ Since our BI team is ingesting data on a daily basis, it is possible that a give
 As an answer to that we made sure not to use time-sensitive metrics for notifications. For example we would not send out notifications when a user has crossed usage limits for the first time, but only when it was above limit for 7 days. That removes the scenario that it was just a blip. 
 It still remained possible however that data in HS was incorrect for at least 24h. That was a big reason to work on our real-time data pipeline from our app into our commercial tools, which we have solved at the end of 2023.
 
-Implementinh our real-time data pipeline has allowed us to get a health check of our customers in seconds. We can now check-in on new customer for example struggling with a new destination immediately and alleviate the frustration.
+Implementing our real-time data pipeline has allowed us to get a health check of our customers in seconds. We can now check-in on new customer for example struggling with a new destination immediately and alleviate the frustration.
 
 # Closing Thoughts:
-Change is extraordinarily difficult. Finding technological solutions is often fairly easy compared to the cultural and organizational challenges of change. Fortunately, we were able to overcome these obstacles and break down a lot of architectural and cultural roadblocks. This has not only enabled the Revenue Operations team but also allows other commercial teams to use and act on the same data. The changes will likely have an even bigger impact on Funnel than what we have directly measured with our notifications. It was an investment in the fundamental capabilities of Funnel.
+Change is extraordinarily difficult. Finding technological solutions is often fairly easy compared to the cultural and organizational challenges of change. Fortunately, we were able to overcome these obstacles and break down a lot of architectural and cultural roadblocks. This has not only enabled the Revenue Operations team but also allows other commercial teams to use and act on the same data. The changes will likely have an even bigger impact on Funnel than what we have directly measured with our notifications. It was an important investment in the fundamental capabilities of Funnel.
