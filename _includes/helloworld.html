@@ -29,20 +29,17 @@
     </div>
 
     <div id="sketch">
-        <canvas id="myCanvas" style="border: 1px solid #000000;"></canvas>
-    </div>
+        <canvas id="myCanvas" width="400" height="400" style="border: 1px solid #000000;"></canvas>    </div>
     <script>
         var myCanvas;
     
         function setup() {
-            myCanvas = document.getElementById('myCanvas');
-            var ctx = myCanvas.getContext('2d');
-            background(220);
-        }
-    
-        function draw() {
-            ellipse(mouseX, mouseY, 50, 50);
-        }
+        myCanvas = document.getElementById('myCanvas');
+        var ctx = myCanvas.getContext('2d');
+        background(220);
+        fill(255, 0, 0); // Set fill color to red
+        rect(50, 50, 100, 100); // Draw a rectangle at position (50, 50) with width 100 and height 100
+    }
     </script>
     
 
