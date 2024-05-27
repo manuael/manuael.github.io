@@ -14,7 +14,7 @@ order: 4
 - Have a fairly wide knowledge base about random technical stuff and I love to connect the dots between all worlds. Feels like a superpower.
 - Likes cats and cellular automata.
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.js"></script>
 
 <script>console.log("hallo inline 2")</script>
 <script>
