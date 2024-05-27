@@ -5,4 +5,4 @@ categories: [game]
 tags: [cellular]
 ---
 
-{% include helloworld.html %}
+{% include gameoflife.html %}
