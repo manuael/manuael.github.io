@@ -18,6 +18,3 @@ order: 4
 
 <script>console.log("hallo inline 2")</script>
 
-
-{% include gameoflife.html %}
-
