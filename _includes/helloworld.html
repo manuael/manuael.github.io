@@ -34,12 +34,14 @@
         var myCanvas;
     
         function setup() {
-        myCanvas = document.getElementById('myCanvas');
-        var ctx = myCanvas.getContext('2d');
-        background(220);
-        fill(255, 0, 0); // Set fill color to red
-        rect(50, 50, 100, 100); // Draw a rectangle at position (50, 50) with width 100 and height 100
-    }
+            myCanvas = document.getElementById('myCanvas');
+            var ctx = myCanvas.getContext('2d');
+            background(220);
+        }
+    
+        function draw() {
+            ellipse(mouseX, mouseY, 50, 50);
+        }
     </script>
     
 
