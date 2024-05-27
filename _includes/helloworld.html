@@ -32,12 +32,11 @@
         <canvas id="myCanvas" style="border: 1px solid #000000;"></canvas>
     </div>
     <script>
-        // Your p5.js sketch code goes here
         var myCanvas;
     
         function setup() {
-            myCanvas = createCanvas(400, 400);
-            myCanvas.parent("myCanvas"); // Attach the canvas to the 'myCanvas' div
+            myCanvas = document.getElementById('myCanvas');
+            var ctx = myCanvas.getContext('2d');
             background(220);
         }
     
