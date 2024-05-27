@@ -30,7 +30,7 @@
     </div>
 
     <div id="sketch">
-        <canvas id="myCanvas" width="1400" height="1400" style="border: 1px solid #000000;"></canvas>    </div>
+        <canvas id="myCanvas" width="400" height="400" style="border: 1px solid #000000;"></canvas>    </div>
     <script>
         var myCanvas;
     
@@ -41,8 +41,9 @@
         }
     
         function draw() {
-            ellipse(mouseX, mouseY, 200, 200);
+            ellipse(mouseX, mouseY, 20 , 20);
         }
+        new p5(); // Initialize p5 with existing canvas
     </script>
     
 
