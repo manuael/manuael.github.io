@@ -14,5 +14,4 @@ order: 4
 - Have a fairly wide knowledge base about random technical stuff and I love to connect the dots between all worlds. Feels like a superpower.
 - Likes cats and cellular automata.
 
-
-{% include gameoflife.html %}
+<script>console.log("hallo inline")</script>
