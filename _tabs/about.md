@@ -13,3 +13,6 @@ order: 4
 - Write in Godot in my free time.
 - Have a fairly wide knowledge base about random technical stuff and I love to connect the dots between all worlds. Feels like a superpower.
 - Likes cats and cellular automata.
+
+
+{% include mycomponent.html %}
