@@ -13,7 +13,7 @@ order: 4
 - Write in Godot in my free time.
 - Have a fairly wide knowledge base about random technical stuff and I love to connect the dots between all worlds. Feels like a superpower.
 - Likes cats and cellular automata.
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
 <script>
   console.log("hallo inline 2")
   let w;
