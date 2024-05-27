@@ -18,8 +18,8 @@ order: 4
 
 <script>console.log("hallo inline 2")</script>
 <script>
-  console.log("hallo inline 3")
-  let w;
+  console.log("hallo inline 3");
+      let w;
       let columns;
       let rows;
       let board;
