@@ -1,0 +1,40 @@
+---
+import '../styles/global.css';
+import { getCollection } from 'astro:content';
+interface Props { title?: string; description?: string }
+const { title, description = 'Notes on systems and data. Games, cellular automata, and other things made out of curiosity.' } = Astro.props;
+const path = Astro.url.pathname;
+const types = new Set((await getCollection('entries')).map(entry => entry.data.type));
+const filters = [
+  ['all', 'All'],
+  ...(['note', 'game', 'experiment'] as const)
+    .filter(type => types.has(type))
+    .map(type => [type, { note: 'Notes', game: 'Games', experiment: 'Experiments' }[type]]),
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#1c222b" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={new URL(Astro.url.pathname, Astro.site)} />
+    <meta property="og:title" content={title ? `${title} · Manuaelly` : 'Manuaelly'} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <title>{title ? `${title} · Manuaelly` : 'Manuaelly — notes & curious things'}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header shell">
+      <a class="brand" href="/" aria-label="Manuaelly home"><span class="brand-mark" aria-hidden="true">≈</span> Manuaelly<span class="brand-dot">.</span></a>
+      <nav aria-label="Main navigation">
+        {filters.map(([type, label]) => <a href={type === 'all' ? '/' : `/?type=${type}`} data-filter={type} aria-current={path === '/' && type === 'all' ? 'page' : undefined}>{label}</a>)}
+        <a href="/about/" aria-current={path === '/about/' ? 'page' : undefined}>About</a>
+      </nav>
+    </header>
+    <main id="main" class="shell"><slot /></main>
+  </body>
+</html>

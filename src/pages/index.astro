@@ -1,0 +1,141 @@
+---
+import Base from "../layouts/Base.astro";
+import { getCollection } from "astro:content";
+const entries = (await getCollection("entries")).sort(
+  (a, b) =>
+    b.data.date.valueOf() - a.data.date.valueOf() ||
+    a.data.title.localeCompare(b.data.title),
+);
+---
+
+<Base>
+  <section class="entries" aria-label="Entries">
+    <p class="filter-status" role="status" aria-live="polite" hidden></p>
+    <ul class="entry-list">
+      {entries.map((entry) => (
+        <li data-type={entry.data.type}>
+          <a
+            class="note-row"
+            href={`/${entry.data.permalink ?? `entries/${entry.id}`}/`}
+          >
+            <time datetime={entry.data.date.toISOString()}>
+              {entry.data.date.toLocaleDateString("en-GB", {
+                day: "numeric",
+                month: "short",
+                year: "numeric",
+                timeZone: "UTC",
+              })}
+            </time>
+            <div>
+              <h2>{entry.data.title}</h2>
+              <p>{entry.data.description}</p>
+            </div>
+            <span class="entry-type">{entry.data.type}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p data-empty hidden>
+      No entries of this type yet.
+    </p>
+  </section>
+</Base>
+
+<style>
+  .entries {
+    padding-top: 24px;
+  }
+  .entry-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .note-row {
+    grid-template-columns: 115px 1fr 90px;
+  }
+  .note-row h2 {
+    font-size: 17px;
+    line-height: 1.5;
+    margin: 0 0 8px;
+  }
+  .note-row:hover h2 {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .entry-type {
+    color: var(--muted);
+    font: 11px var(--mono);
+    padding-top: 4px;
+    text-align: right;
+  }
+  .filter-status {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  @media (max-width: 520px) {
+    .note-row {
+      grid-template-columns: 1fr auto;
+    }
+    .note-row time {
+      grid-column: 1;
+    }
+    .note-row > div {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+    .entry-type {
+      grid-column: 2;
+      grid-row: 1;
+    }
+  }
+</style>
+
+<script>
+  const buttons = [
+    ...document.querySelectorAll<HTMLAnchorElement>("[data-filter]"),
+  ];
+  const rows = [...document.querySelectorAll<HTMLLIElement>("[data-type]")];
+  const status = document.querySelector<HTMLElement>(".filter-status")!;
+  const empty = document.querySelector<HTMLElement>("[data-empty]")!;
+  const applyFilter = () => {
+    const requested = new URL(location.href).searchParams.get("type") ?? "all";
+    const type = buttons.some((button) => button.dataset.filter === requested)
+      ? requested
+      : "all";
+    let count = 0;
+    for (const row of rows) {
+      row.hidden = type !== "all" && row.dataset.type !== type;
+      if (!row.hidden) count++;
+    }
+    for (const button of buttons) {
+      if (button.dataset.filter === type)
+        button.setAttribute("aria-current", "page");
+      else button.removeAttribute("aria-current");
+    }
+    empty.hidden = count !== 0;
+    status.textContent = `${count} ${count === 1 ? "entry" : "entries"} shown`;
+  };
+  for (const button of buttons)
+    button.addEventListener("click", (event) => {
+      if (
+        event.metaKey ||
+        event.ctrlKey ||
+        event.shiftKey ||
+        event.altKey ||
+        event.button !== 0
+      )
+        return;
+      event.preventDefault();
+      const url = new URL(location.href);
+      if (button.dataset.filter === "all") url.searchParams.delete("type");
+      else url.searchParams.set("type", button.dataset.filter!);
+      if (url.href !== location.href) history.pushState(null, "", url);
+      applyFilter();
+    });
+  window.addEventListener("popstate", applyFilter);
+  status.hidden = false;
+  applyFilter();
+</script>

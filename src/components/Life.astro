@@ -1,0 +1,228 @@
+<life-simulation class="life">
+  <div class="life-top">
+    <span data-generation>Generation 0</span>
+  </div>
+  <canvas
+    width="640"
+    height="360"
+    aria-label="Conway’s Game of Life simulation. Click or tap to toggle cells. Use the controls below to change the simulation."
+  ></canvas>
+  <div class="life-controls">
+    <div>
+      <button data-action="toggle" aria-label="Play simulation">
+        Play
+      </button>
+      <button data-action="step">Step</button>
+      <button data-action="reset">Randomise</button>
+      <button data-action="clear">Clear</button>
+    </div>
+    <label>
+      Speed{' '}
+      <input
+        aria-label="Simulation speed"
+        type="range"
+        min="1"
+        max="20"
+        value="8"
+      />
+    </label>
+  </div>
+  <p class="life-caption">
+    Conway’s Game of Life <span>Click the grid to add a little chaos.</span>
+  </p>
+</life-simulation>
+<style>
+  .life {
+    display: block;
+    min-width: 0;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    overflow: hidden;
+    background: var(--surface);
+    font-family: var(--mono);
+  }
+  .life-top {
+    padding: 18px 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+  }
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    cursor: crosshair;
+  }
+  .life-controls {
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    border-top: 1px solid var(--line);
+  }
+  .life-controls > div {
+    display: flex;
+    gap: 7px;
+    flex-wrap: wrap;
+  }
+  .life-controls button {
+    padding: 7px 11px;
+    font-size: 11px;
+  }
+  .life-controls label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .life-controls input {
+    width: 75px;
+    accent-color: var(--accent);
+  }
+  .life-caption {
+    padding: 0 20px 16px;
+    margin: 0;
+    font-size: 11px;
+    color: var(--accent);
+  }
+  .life-caption span {
+    color: var(--muted);
+    margin-left: 10px;
+  }
+</style>
+<script>
+  class LifeSimulation extends HTMLElement {
+    connectedCallback() {
+      const canvas = this.querySelector('canvas')!;
+      const ctx = canvas.getContext('2d')!;
+      const generationLabel = this.querySelector('[data-generation]')!;
+      const toggle = this.querySelector<HTMLButtonElement>(
+        '[data-action="toggle"]',
+      )!;
+      const speed = this.querySelector<HTMLInputElement>('input')!;
+      const cols = 64,
+        rows = 36,
+        size = 10;
+      let cells = new Uint8Array(cols * rows);
+      let generation = 0;
+      let running = false;
+      let last = 0;
+      let visible = true;
+      const palette = getComputedStyle(this);
+      const background = palette.getPropertyValue('--bg').trim();
+      const alive = palette.getPropertyValue('--accent').trim();
+      const dead = palette.getPropertyValue('--surface').trim();
+      const paint = () => {
+        ctx.fillStyle = background;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        for (let y = 0; y < rows; y++)
+          for (let x = 0; x < cols; x++) {
+            ctx.fillStyle = cells[y * cols + x] ? alive : dead;
+            ctx.fillRect(x * size + 1, y * size + 1, size - 2, size - 2);
+          }
+        generationLabel.textContent = `Generation ${generation}`;
+      };
+      const step = () => {
+        const next = new Uint8Array(cells.length);
+        for (let y = 0; y < rows; y++)
+          for (let x = 0; x < cols; x++) {
+            let neighbours = 0;
+            for (let dy = -1; dy <= 1; dy++)
+              for (let dx = -1; dx <= 1; dx++) {
+                if (!dx && !dy) continue;
+                const nx = x + dx,
+                  ny = y + dy;
+                if (nx >= 0 && nx < cols && ny >= 0 && ny < rows)
+                  neighbours += cells[ny * cols + nx];
+              }
+            const i = y * cols + x;
+            next[i] = Number(
+              neighbours === 3 || (cells[i] === 1 && neighbours === 2),
+            );
+          }
+        cells = next;
+        generation++;
+        paint();
+      };
+      const setRunning = (value: boolean) => {
+        running = value;
+        toggle.textContent = running ? 'Pause' : 'Play';
+        toggle.setAttribute(
+          'aria-label',
+          running ? 'Pause simulation' : 'Play simulation',
+        );
+      };
+      const reset = () => {
+        cells = cells.map(() => Number(Math.random() < 0.24));
+        generation = 0;
+        paint();
+      };
+      toggle.addEventListener('click', () => setRunning(!running));
+      this.querySelector('[data-action="step"]')!.addEventListener(
+        'click',
+        () => {
+          setRunning(false);
+          step();
+        },
+      );
+      this.querySelector('[data-action="reset"]')!.addEventListener(
+        'click',
+        reset,
+      );
+      this.querySelector('[data-action="clear"]')!.addEventListener(
+        'click',
+        () => {
+          setRunning(false);
+          cells.fill(0);
+          generation = 0;
+          paint();
+        },
+      );
+      canvas.addEventListener('pointerdown', (event) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = Math.floor(((event.clientX - rect.left) / rect.width) * cols);
+        const y = Math.floor(((event.clientY - rect.top) / rect.height) * rows);
+        if (x >= 0 && x < cols && y >= 0 && y < rows) {
+          cells[y * cols + x] ^= 1;
+          paint();
+        }
+      });
+      const observer = new IntersectionObserver(([entry]) => {
+        visible = entry.isIntersecting;
+      });
+      observer.observe(this);
+      const animate = (time: number) => {
+        if (
+          running &&
+          visible &&
+          !document.hidden &&
+          time - last >= 1000 / Number(speed.value)
+        ) {
+          step();
+          last = time;
+        }
+        this.frame = requestAnimationFrame(animate);
+      };
+      this.cleanup = () => observer.disconnect();
+      reset();
+      setRunning(
+        !window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+      );
+      this.frame = requestAnimationFrame(animate);
+    }
+    frame = 0;
+    cleanup = () => {};
+    disconnectedCallback() {
+      cancelAnimationFrame(this.frame);
+      this.cleanup();
+    }
+  }
+  customElements.define('life-simulation', LifeSimulation);
+</script>

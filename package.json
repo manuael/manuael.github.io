@@ -1,0 +1,21 @@
+{
+  "name": "manuels-manuals",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "format": "prettier --write src astro.config.mjs tsconfig.json package.json .prettierrc.json",
+    "format:check": "prettier --check src astro.config.mjs tsconfig.json package.json .prettierrc.json"
+  },
+  "dependencies": {
+    "astro": "^7.4.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "prettier": "^3.9.10",
+    "prettier-plugin-astro": "^1.1.2",
+    "typescript": "^6.0.3"
+  }
+}

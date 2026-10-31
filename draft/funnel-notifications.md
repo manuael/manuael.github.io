@@ -1,24 +1,25 @@
 ---
-layout: post
-title:  "From Data Silos to $2 Million ARR Boost: Funnel’s Journey with Data Integration and Proactive Notifications"
-categories: [article]
-tags: [Funnel, Hubspot]
+title: "From Data Silos to $2 Million ARR Boost: Funnel’s Journey with Data Integration and Proactive Notifications"
+description: "Connecting product data and commercial teams at Funnel with data integration and proactive notifications."
+date: 2024-04-24
+type: note
+tags: [Funnel, HubSpot, Data integration]
+permalink: Funnel-notifications
 ---
-{% include mycomponent.html %}
 
 Customer Support and Success is one of the most important pillars of a successful B2B business. In order to provide great customer experience, the business needs to stay closely connected to their users.
 
 Just a few years ago, commercial teams at [Funnel](https://www.funnel.io) faced the challenge of not being able to fully leverage our application data. This resulted in missed opportunities and preventable churn. Through strategic improvements in our data infrastructure and architectural design, we enabled our teams to change from being reactive to customer communication to proactively assist and reach out to our customers when they need help. This had immediate impact to our bottom line: we observed an increase of our Annual Recurring Revenue (ARR) by over 2 million USD in 2 years. In this article, I would like to give a short overview of the obstacles, the decisions and the inner workings of the solution.
 
-# Challenges
-### Difficult and time consuming to understand customer behavior
+## Challenges
+#### Difficult and time consuming to understand customer behavior
 
 Hubspot was and still is our central commercial nervous system. All revenue teams work in some way or another with the platform. Hubspot was however fully disconnected from our own app when I started. As a result our commercial teams struggled with lack of insight into what our customers and leads were doing in-app. They had to resort to check every customer manually in our reporting tool. Since this took a good amount of time, most could only react on important events like renewals and customer communication instead of proactilvely reaching out to help and support.
 
-### Inaccurate data
+#### Inaccurate data
 On top of that we relied on human input to map subscriptions to hubspot records. Only then was our Finance team able to assign the right revenue to the right subscriptions. As you may imagine, this did not only cost thousands of hours of admin work, but also produced inaccurate data, as wrong data was copied or entirely forgotten on a regular basis. 
 
-### Architecture Design:
+#### Architecture Design:
 
 Fortunately we already had a pipeline set up that imported data into BigQuery and Looker for reporting.
 
@@ -44,7 +45,7 @@ If you are familiar with data modelling, you already know that this is a classic
 
 Even though only 10% of our customers had more than one subscription, this would mean our reps could only trust 90% of the data. This is not a good enough trade-off for us. We need to be sure that the data we see in Hubspot is correct. Any doubt of the correctness defeats the purpose and will lead people to make manual changes again.
 
-# Solutions
+## Solutions
 
 Fortunately Hubspot released a new beta at that time: [custom objects](https://www.hubspot.com/products/custom-objects). We were eager to jump on that new functionality, because it gave us the possibility to create a 1:1 relationship between our subscription in Funnel and our new custom object in Hubspot.
 
@@ -88,7 +89,7 @@ With the hard data engineering work done, setting up the rest of the process was
 
 To identify the impact of these changes we started tracking the deals closed after receiving a notification and had our reps confirm if the closed deal was because of our notifications. We found out that due to these changes we were able to create more than 2M USD ARR over 2 years with just this one new feature. That is a significant and incremental revenue increase.
 
-# Trade-Offs
+## Trade-Offs
 
 *“There are no right and wrong answers in architecture - only trade-offs”.* 
 
@@ -117,5 +118,5 @@ It still remained possible however that data in HS was incorrect for at least 24
 
 Implementing our real-time data pipeline has allowed us to get a health check of our customers in seconds. We can now check-in on new customer for example struggling with a new destination immediately and alleviate the frustration.
 
-# Closing Thoughts:
+## Closing Thoughts:
 Change is extraordinarily difficult. Finding technological solutions is often fairly easy compared to the cultural and organizational challenges of change. Fortunately, we were able to overcome these obstacles and break down a lot of architectural and cultural roadblocks. This has not only enabled the Revenue Operations team but also allows other commercial teams to use and act on the same data. The changes will likely have an even bigger impact on Funnel than what we have directly measured with our notifications. It was an important investment in the fundamental capabilities of Funnel.

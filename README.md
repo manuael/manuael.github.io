@@ -1,56 +1,81 @@
-# Chirpy Starter
+# Manuaelly
 
-[![Gem Version](https://img.shields.io/gem/v/jekyll-theme-chirpy)][gem]&nbsp;
-[![GitHub license](https://img.shields.io/github/license/cotes2020/chirpy-starter.svg?color=blue)][mit]
+A personal website built with Astro and hosted on GitHub Pages. Notes, games, and experiments share one chronological list, filtered by type.
 
-When installing the [**Chirpy**][chirpy] theme through [RubyGems.org][gem], Jekyll can only read files in the folders
-`_data`, `_layouts`, `_includes`, `_sass` and `assets`, as well as a small part of options of the `_config.yml` file
-from the theme's gem. If you have ever installed this theme gem, you can use the command
-`bundle info --path jekyll-theme-chirpy` to locate these files.
+## Development
 
-The Jekyll team claims that this is to leave the ball in the user’s court, but this also results in users not being
-able to enjoy the out-of-the-box experience when using feature-rich themes.
+Requires Node.js 24.
 
-To fully use all the features of **Chirpy**, you need to copy the other critical files from the theme's gem to your
-Jekyll site. The following is a list of targets:
-
-```shell
-.
-├── _config.yml
-├── _plugins
-├── _tabs
-└── index.html
+```sh
+npm ci
+npm run dev
 ```
 
-To save you time, and also in case you lose some files while copying, we extract those files/configurations of the
-latest version of the **Chirpy** theme and the [CD][CD] workflow to here, so that you can start writing in minutes.
+Open http://localhost:4321. `npm run build` checks types and generates `dist/`. `npm run preview` previews that production build.
 
-## Prerequisites
+Use `npm run format` to format source files with Prettier, or `npm run format:check` to check formatting without changing files.
 
-Follow the instructions in the [Jekyll Docs](https://jekyllrb.com/docs/installation/) to complete the installation of
-the basic environment. [Git](https://git-scm.com/) also needs to be installed.
+## Add an entry
 
-## Installation
+Create `src/content/entries/my-entry.md`:
 
-Sign in to GitHub and [**use this template**][use-template] to generate a brand new repository and name it
-`USERNAME.github.io`, where `USERNAME` represents your GitHub username.
+```md
+---
+title: "Something I learned"
+description: "A short summary for the list."
+date: 2026-10-31
+type: note
+tags: [JavaScript]
+---
 
-Then clone it to your local machine and run:
-
-```console
-$ bundle
+Write in Markdown here. Include images, code, and explanations.
 ```
 
-## Usage
+- `type` is `note`, `game`, or `experiment`. It only sets the label and filter; all types use the same layout and support the same fields.
+- Entries automatically appear on the homepage, newest first.
+- The default URL is `/entries/my-entry/`.
+- Optional `permalink: custom/path` overrides the URL. Avoid paths used by other pages or redirects.
+- Put images in `public/images/` and reference them as `/images/filename.png`.
+- Header filters appear only for types that have entries. They are shareable, e.g. `/?type=experiment`, and support browser back/forward. Without JavaScript, all entries remain readable.
 
-Please see the [theme's docs](https://github.com/cotes2020/jekyll-theme-chirpy#documentation).
+## Games and interactive entries
 
-## License
+The same Markdown file can include optional fields:
 
-This work is published under [MIT][mit] License.
+```yaml
+type: game
+status: Prototype
+cover: /images/my-game.png
+playUrl: /builds/my-game/index.html
+controls: "Arrow keys to move. Space to jump."
+```
 
-[gem]: https://rubygems.org/gems/jekyll-theme-chirpy
-[chirpy]: https://github.com/cotes2020/jekyll-theme-chirpy/
-[use-template]: https://github.com/cotes2020/chirpy-starter/generate
-[CD]: https://en.wikipedia.org/wiki/Continuous_deployment
-[mit]: https://github.com/cotes2020/chirpy-starter/blob/master/LICENSE
+Put the browser build in `public/builds/my-game/`, using relative asset paths inside the build. `playUrl` embeds it and adds an open-in-new-tab link. Alternatively, use `externalUrl: https://your-name.itch.io/your-game` for a play/download link. Status can be `Prototype`, `In progress`, or `Finished`.
+
+Godot web exports need testing: use a non-threaded export compatible with ordinary static hosting. GitHub Pages cannot set the isolation headers needed by some threaded exports. Use a suitable game host for incompatible or very large builds.
+
+For the built-in Game of Life component, use `interactive: game-of-life`. To add another custom interactive component, add its identifier to `src/content.config.ts` and render it conditionally in `src/pages/[...slug].astro`. This keeps its written content and metadata in the same collection as everything else.
+
+## Structure
+
+- `src/content/entries/`: all Markdown content
+- `src/content.config.ts`: entry schema and required fields
+- `src/pages/index.astro`: mixed list and type filters
+- `src/pages/[...slug].astro`: shared entry layout
+- `src/components/Life.astro`: Game of Life
+- `src/layouts/Base.astro`: shared header, type filters, metadata
+- `src/styles/global.css`: colours, typography, responsive layout
+- `public/fonts/ibm-plex-mono/`: self-hosted regular and bold fonts, with their license
+- `public/`: static files copied into the build
+
+The existing URLs `/Funnel-notifications/` and `/experiments/game-of-life/` are preserved. Old section URLs (`/notes/`, `/games/`, `/experiments/`) redirect to homepage filters. On static GitHub Pages hosting these are HTML redirects, not server-side HTTP redirects.
+
+## Deployment
+
+Set repository **Settings → Pages → Source** to **GitHub Actions**. Pushing to `main` runs `.github/workflows/pages-deploy.yml` to install, check, build, and deploy `dist/`. Local edits do not publish anything.
+
+## Generated files
+
+`node_modules/`, `dist/`, and `.astro/` are generated and ignored by Git. Do not edit them. Dependencies can be restored with `npm ci`; the build recreates the generated website and Astro types.
+
+The old Jekyll source and theme submodule have been removed. Historical tracked files remain available in Git history. All current website content lives in `src/` and `public/`.
